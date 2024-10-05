@@ -2,15 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Game from './Game'
+//import Game from './Game'
+import Cardgame from './Cardgame';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
-    <Game />
+    <Cardgame />
+    
   </React.StrictMode>
 );
 

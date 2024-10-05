@@ -1,0 +1,31 @@
+.game-container {
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 100px); /* Adjust number of columns and card size as needed */
+  gap: 10px;
+  margin: 20px auto;
+}
+
+.card {
+  width: 100px;
+  height: 100px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 5px;
+}
+
+.card.revealed {
+  background-color: #fff; /* Change color for revealed cards */
+}
+
+.card.matched {
+  background-color: #4caf50; /* Change color for matched cards */
+}
