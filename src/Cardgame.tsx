@@ -51,74 +51,89 @@ const Cardgame = () =>{
         )
     },[]);
 
-    const handleCardClick = (index : number)=>{
-        if(gameState.disableClick || gameState.cards[index].revealed || gameState.cards[index].matched)
-            return ;
+    const handleCardClick = (index: number) => {
+    if (gameState.disableClick || gameState.cards[index].revealed || gameState.cards[index].matched) {
+        return;
+    }
 
-        const updatedCards = [...gameState.cards];
-        updatedCards[index].revealed = true;
+    // Reveal the clicked card
+    const updatedCards = revealCard(index);
 
-        if(gameState.firstnumber == null)
-        {
-            setGameState( (prevState)=>({
-                    ...prevState,
-                    cards:updatedCards,
-                    firstnumber:index,
-                }));
-        }
-        else if(gameState.secondnumber === null)
-        {
-            const newGameState = {
-                ...gameState,
-                cards:updatedCards,
-                disableClick : true,
-                secondnumber:index,
-            };
-            const isMatch =  updatedCards[gameState.firstnumber].value === updatedCards[index].value;
-            if(isMatch)
-            {
-                const matchedCards = updatedCards.map((card,i)=>{
-                    if(i === newGameState.firstnumber || i === newGameState.secondnumber)
-                    {
-                        return {...card,matched:true};
-                    }
-                    return card;
-                })
+    if (gameState.firstnumber === null) {
+        // If it's the first card clicked
+        setGameState(prevState => ({
+            ...prevState,
+            cards: updatedCards,
+            firstnumber: index,
+        }));
+    } else {
+        // If it's the second card clicked
+        setGameState(prevState => ({
+            ...prevState,
+            cards: updatedCards,
+            secondnumber: index,
+            disableClick: true, // Disable further clicks until we process the match
+        }));
 
-                setGameState({
-                    ...newGameState,
-                    cards:matchedCards,
-                    firstnumber:null,
-                    secondnumber:null,
-                    disableClick:false
-                });
+        checkForMatch(updatedCards, index);
+    }
+};
+
+// Helper function to reveal a card
+const revealCard = (index: number): Card[] => {
+    return gameState.cards.map((card, i) =>
+        i === index ? { ...card, revealed: true } : card
+    );
+};
+
+// Helper function to check if two cards match
+const checkForMatch = (updatedCards: Card[], secondCardIndex: number) => {
+    const firstCardIndex = gameState.firstnumber;
+    const isMatch = updatedCards[firstCardIndex!].value === updatedCards[secondCardIndex].value;
+
+    if (isMatch) {
+        // If the cards match, update their 'matched' status
+        const matchedCards = updatedCards.map((card, i) => {
+            if (i === firstCardIndex || i === secondCardIndex) {
+                return { ...card, matched: true };
             }
-            else{
-                setTimeout( ()=>{
-                    const cards = newGameState.cards;
-                    const resetcards = cards.map((card,i)=>{
-                        if(i == newGameState.firstnumber || i === newGameState.secondnumber)
-                            return {...card, revealed:false}
-                        else
-                            return card;
-                        // i === newGameState.firstnumber || i === newGameState.secondnumber ? {...card, revealed:false} : card
-                    });
-                    setGameState({
-                        ...newGameState,
-                        cards: resetcards,
-                        firstnumber:null,
-                        secondnumber:null,
-                        disableClick:false,
-                    });
-                }, 1000)
-            }
-        }      
-    }; 
+            return card;
+        });
+
+        setGameState(prevState => ({
+            ...prevState,
+            cards: matchedCards,
+            firstnumber: null,
+            secondnumber: null,
+            disableClick: false,
+        }));
+    } else {
+        // If the cards don't match, hide them after a timeout
+        setTimeout(() => {
+            const resetCards = updatedCards.map((card, i) => {
+                if (i === firstCardIndex || i === secondCardIndex) {
+                    return { ...card, revealed: false };
+                }
+                return card;
+            });
+
+            setGameState(prevState => ({
+                ...prevState,
+                cards: resetCards,
+                firstnumber: null,
+                secondnumber: null,
+                disableClick: false,
+            }));
+        }, 300);
+    }
+};
+
 
 
     return (
-  <div className="game-container">
-    <h1>Memory Card Game</h1>
+        <div className="game-container">
+      <h1>Memory Card Game</h1>
+      <div className='card-container'>
     <div className="card-grid">
         
       {gameState.cards.map((card, index) => (
@@ -131,6 +146,7 @@ const Cardgame = () =>{
           {card.revealed || card.matched ? card.value : "?"} {/* Show card value if revealed or matched */}
         </div>
       ))}
+    </div>
     </div>
   </div>
 );

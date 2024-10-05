@@ -1,12 +1,12 @@
 // App.tsx
 
 import React from 'react';
-import './App.css'; // Include your global CSS if needed
-//import Gamee from './Game.tsx'; // Import the Game component
+import './App.css'; 
+import CardGame from './Cardgame'
 
 const App: React.FC = () => {
   return (
-    <></>
+    <CardGame />
   );
 };
 
